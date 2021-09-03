@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 @SuppressWarnings("serial")
 public class Tetris extends JFrame {
 
-    private JLabel statusbar;
+    private JLabel scoreStatusBar;
 
     public Tetris() {
         initUI();
@@ -16,8 +16,8 @@ public class Tetris extends JFrame {
 
     private void initUI() {
 
-        statusbar = new JLabel("Score: 0");
-        add(statusbar, BorderLayout.SOUTH);
+        scoreStatusBar = new JLabel("Score: 0");
+        add(scoreStatusBar, BorderLayout.SOUTH);
 
         var board = new Board(this);
         add(board);
@@ -30,7 +30,7 @@ public class Tetris extends JFrame {
         
     }
 
-    JLabel getStatusBar() {return statusbar;}
+    JLabel getStatusBar() {return scoreStatusBar;}
 
     public static void main(String[] args) {
 

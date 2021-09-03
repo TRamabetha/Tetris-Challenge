@@ -5,17 +5,14 @@ import java.util.Random;
 public class Shape {
 
     protected enum gameShapes { NoShape, ZShape, SShape, LineShape,
-        TShape, SquareShape, LShape, MirroredLShape }
+        TShape, SquareShape, LShape, InverseLShape }
 
     private gameShapes pieceShape;
     private int coords[][];
     private int[][][] coordsTable;
 
 
-    public Shape() {
-
-        initShape();
-    }
+    public Shape() { initShape(); }
 
     private void initShape() {
 
@@ -39,10 +36,7 @@ public class Shape {
 
         for (int i = 0; i < 4 ; i++) {
 
-            for (int j = 0; j < 2; ++j) {
-
-                coords[i][j] = coordsTable[shape.ordinal()][i][j];
-            }
+            for (int j = 0; j < 2; ++j) { coords[i][j] = coordsTable[shape.ordinal()][i][j]; }
         }
 
         pieceShape = shape;
@@ -65,21 +59,18 @@ public class Shape {
     
     public void setRandomShape() {
 
-        var r = new Random();
-        int x = Math.abs(r.nextInt()) % 7 + 1;
+        var rand = new Random();
+        int randShape = Math.abs(rand.nextInt()) % 7 + 1;
 
         gameShapes[] values = gameShapes.values();
-        setShape(values[x]);
+        setShape(values[randShape]);
     }
 
     public int minX() {
 
         int m = coords[0][0];
 
-        for (int i=0; i < 4; i++) {
-
-            m = Math.min(m, coords[i][0]);
-        }
+        for (int i=0; i < 4; i++) { m = Math.min(m, coords[i][0]); }
 
         return m;
     }
@@ -89,10 +80,7 @@ public class Shape {
 
         int m = coords[0][1];
 
-        for (int i=0; i < 4; i++) {
-
-            m = Math.min(m, coords[i][1]);
-        }
+        for (int i=0; i < 4; i++) { m = Math.min(m, coords[i][1]); }
 
         return m;
     }
@@ -100,10 +88,7 @@ public class Shape {
  
     public Shape rotate() {
 
-        if (pieceShape == gameShapes.SquareShape) {
-
-            return this;
-        }
+        if (pieceShape == gameShapes.SquareShape) { return this; }
 
         var result = new Shape();
         result.pieceShape = pieceShape;

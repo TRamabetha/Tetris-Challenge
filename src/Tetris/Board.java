@@ -22,10 +22,10 @@ public class Board extends JPanel {
     private Timer timer;
     private boolean isFallingFinished = false;
     private boolean isPaused = false;
-    private int numLinesRemoved = 0;
-    private int curX = 0;
-    private int curY = 0;
-    private JLabel statusbar;
+    private int removedRowsNum = 0;
+    private int currentShapeX = 0;
+    private int currentShapeY = 0;
+    private JLabel scoreStatusBar;
     private Shape currentShape;
     private Shape nextShape;
     private gameShapes[] board;
@@ -35,7 +35,7 @@ public class Board extends JPanel {
     private void initBoard(Tetris parent) {
 
         setFocusable(true);
-        statusbar = parent.getStatusBar();
+        scoreStatusBar = parent.getStatusBar();
         addKeyListener(new TAdapter());
     }
 
@@ -63,9 +63,9 @@ public class Board extends JPanel {
 
         isPaused = !isPaused;
 
-        if (isPaused) { statusbar.setText( "paused"); }
+        if (isPaused) { scoreStatusBar.setText( "paused"); }
         
-        else { statusbar.setText(String.valueOf(numLinesRemoved)); }
+        else { scoreStatusBar.setText(String.valueOf(removedRowsNum)); }
         repaint();
     }
 
@@ -97,8 +97,8 @@ public class Board extends JPanel {
 
             for (int i = 0; i < 4; i++) {
 
-                int x = curX + currentShape.x(i);
-                int y = curY - currentShape.y(i);
+                int x = currentShapeX + currentShape.x(i);
+                int y = currentShapeY - currentShape.y(i);
 
                 drawSquare(g, x * squareWidth(),boardTop + (BOARD_HEIGHT - y - 1) * squareHeight(),currentShape.getShape());
             }
@@ -107,11 +107,11 @@ public class Board extends JPanel {
 
     private void dropDown() {
 
-        int newY = curY;
+        int newY = currentShapeY;
 
         while (newY > 0) {
 
-            if (!tryMove(currentShape, curX, newY - 1)) { break; }
+            if (!tryMove(currentShape, currentShapeX, newY - 1)) { break; }
             
             newY--;
         }
@@ -121,7 +121,7 @@ public class Board extends JPanel {
 
     private void oneLineDown() {
 
-        if (!tryMove(currentShape, curX, curY - 1)) { pieceDropped();}
+        if (!tryMove(currentShape, currentShapeX, currentShapeY - 1)) { pieceDropped();}
         
     }
 
@@ -135,8 +135,8 @@ public class Board extends JPanel {
 
         for (int i = 0; i < 4; i++) {
 
-            int x = curX + currentShape.x(i);
-            int y = curY - currentShape.y(i);
+            int x = currentShapeX + currentShape.x(i);
+            int y = currentShapeY - currentShape.y(i);
             board[(y * BOARD_WIDTH) + x] = currentShape.getShape();
         }
 
@@ -150,8 +150,8 @@ public class Board extends JPanel {
 
     	
         currentShape.setRandomShape();
-        curX = BOARD_WIDTH / 2 + 1;
-        curY = BOARD_HEIGHT - 1 + currentShape.minY();
+        currentShapeX = BOARD_WIDTH / 2 + 1;
+        currentShapeY = BOARD_HEIGHT - 1 + currentShape.minY();
         
         checkGameOver();
         
@@ -159,13 +159,13 @@ public class Board extends JPanel {
     
     private void checkGameOver() {
     	
-    	if (!tryMove(currentShape, curX, curY)) {
+    	if (!tryMove(currentShape, currentShapeX, currentShapeY)) {
 
             currentShape.setShape(gameShapes.NoShape);
             timer.stop();
 
-            var gameOverMessage = String.format("Game over. Score: %d", numLinesRemoved);
-            statusbar.setText(gameOverMessage);
+            var gameOverMessage = String.format("Game over. Score: %d", removedRowsNum);
+            scoreStatusBar.setText(gameOverMessage);
         }
     }
 
@@ -183,8 +183,8 @@ public class Board extends JPanel {
         }
 
         currentShape = newPiece;
-        curX = newX;
-        curY = newY;
+        currentShapeX = newX;
+        currentShapeY = newY;
 
         repaint();
 
@@ -221,12 +221,12 @@ public class Board extends JPanel {
 
         if (numFullLines > 0) {
 
-            numLinesRemoved += numFullLines;
+            removedRowsNum += numFullLines;
 
-            statusbar.setText(String.valueOf("Score: " + numLinesRemoved));
+            scoreStatusBar.setText(String.valueOf("Score: " + removedRowsNum));
             isFallingFinished = true;
             currentShape.setShape(gameShapes.NoShape);
-            checkLevelProgression(numLinesRemoved);
+            checkLevelProgression(removedRowsNum);
         }
     }
     
@@ -304,10 +304,10 @@ public class Board extends JPanel {
             switch (keycode) {
 
                 case KeyEvent.VK_P -> pause();
-                case KeyEvent.VK_LEFT -> tryMove(currentShape, curX - 1, curY);
-                case KeyEvent.VK_RIGHT -> tryMove(currentShape, curX + 1, curY);
+                case KeyEvent.VK_LEFT -> tryMove(currentShape, currentShapeX - 1, currentShapeY);
+                case KeyEvent.VK_RIGHT -> tryMove(currentShape, currentShapeX + 1, currentShapeY);
                 case KeyEvent.VK_DOWN -> oneLineDown();
-                case KeyEvent.VK_UP -> tryMove(currentShape.rotate(), curX, curY);
+                case KeyEvent.VK_UP -> tryMove(currentShape.rotate(), currentShapeX, currentShapeY);
                 case KeyEvent.VK_D -> dropDown();
             }
         }
